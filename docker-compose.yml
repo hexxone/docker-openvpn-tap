@@ -1,0 +1,14 @@
+version: '2'
+services:
+    docker_openvpn_tap:
+        build: .
+        container_name: "docker_openvpn_tap"
+        image: alpine/latest
+        restart: on-failure
+        cap_add:
+            - NET_ADMIN
+        volumes:
+            - ./data:/etc/openvpn
+        ports:
+            - "${PUBLIC_PORT}:1194/udp"
+        network_mode: bridge
