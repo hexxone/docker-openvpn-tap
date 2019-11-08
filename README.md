@@ -1,9 +1,6 @@
 # OpenVPN using TAP-MODE for Docker
 
-
-OpenVPN TAP server as Docker-Compose stack complete with an EasyRSA PKI CA.
-
-This project is based on: kylemanna/docker-openvpn
+Modified Version of kylemanna/docker-openvpn to run in TAP Mode with compose.
 
 * Docker Registry @ [kylemanna/openvpn](https://hub.docker.com/r/kylemanna/openvpn/)
 * GitHub @ [kylemanna/docker-openvpn](https://github.com/kylemanna/docker-openvpn)
@@ -17,9 +14,9 @@ At this point a Linux-Docker-Host is mandatory.
 * git clone this project
 
 * IMPORTANT: Modify your hostname/udp port in the `.env` file 
-  and perhaps the network/ip-configuration under `./netctl` and `actual_openvpn.conf` to fit your needs
+  and perhaps the network/ip-configuration `actual_openvpn.conf` to fit your needs
 
-* `chmod +x install.sh`
+* `chmod +x install.sh create_client.sh revoke_client.sh`
 
 * run `install.sh` to setup the docker-compose image, and start it.
   this will also setup and prompt for the CA password several times.
@@ -30,8 +27,10 @@ At this point a Linux-Docker-Host is mandatory.
   This will prompt for the CA password in order to sign a new key for the user.
   the certificate will also be exported to the local `./clients` folder.
 
+* run `docker-compose run docker_openvpn_tap bash` to enter the container with interactive shell.
+  From there use `ifconfig -a` and `cat /etc/network/interfaces` to compare the ip config.
+  At the moment the `br0` NOT receiving an IP address and NOT able to connect outside.
 
-## Next Steps
 
 ## How Does It Work?
 
@@ -69,24 +68,10 @@ The original images uses `tun` mode, because it works on the widest range of dev
 However if you want to have advanced features like LAN-Play you need to use `tap`
 in order to have broadcast discovery packets sent to all devies.
 
-Sadly this enables the possibility of ARP poisoning, why you should only let trusted devices
-be a part of this network
-
-The topology used is `net30`, because it works on the widest range of OS.
-`p2p`, for instance, does not work on Windows.
-
-The UDP server uses`192.168.255.0/24` for dynamic clients by default.
-
-The client profile specifies `redirect-gateway def1`, meaning that after
-establishing the VPN connection, all traffic will go through the VPN.
-This might cause problems if you use local DNS recursors which are not
-directly reachable, since you will try to reach them through the VPN
-and they might not answer to you. If that happens, use public DNS
-resolvers like those of Google (8.8.4.4 and 8.8.8.8) or OpenDNS
-(208.67.222.222 and 208.67.220.220).
-
-
 ## Security Discussion
+
+Sadly this container enables the possibility of ARP poisoning, thats why you should
+only let trusted devices be a part of this network.
 
 The Docker container runs its own EasyRSA PKI Certificate Authority.  This was
 chosen as a good way to compromise on security and convenience.  The container
