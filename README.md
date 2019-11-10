@@ -9,6 +9,12 @@ The base image was changed from Alpine to ArchLinux for easy network interface c
 
 At this point a Linux-Docker-Host is mandatory.
 
+## TODO
+
+* if in-container bridge setup is not possible, maybe hand the /dev/docker0 bridge directly into the container?
+
+
+
 ## Quick Start
 
 * git clone this project
@@ -20,8 +26,6 @@ At this point a Linux-Docker-Host is mandatory.
 
 * run `install.sh` to setup the docker-compose image, and start it.
   this will also setup and prompt for the CA password several times.
-  when scripts are done, the config is overwritten with `actual_openvpn.conf`
-  this is done because generating the server config by easy-rsa with tap is not yet possible.
 
 * run `./create_client <cname>` to create the certificate for a user.
   This will prompt for the CA password in order to sign a new key for the user.
@@ -33,6 +37,8 @@ At this point a Linux-Docker-Host is mandatory.
 
 
 ## How Does It Work?
+
+Scroll down to "differences" for more details on how this container is put together.
 
 Initialize the docker-compose stack using the `install.sh` script to automatically generate:
 
@@ -56,8 +62,6 @@ variables place the PKI CA under `/etc/openvpn/pki`.
 Conveniently, this stack comes with a script called `ovpn_getclient`,
 which dumps an inline OpenVPN client configuration file.  This single file can
 then be given to a client for access to the VPN.
-
-This process has 
 
 
 ## OpenVPN Details
@@ -110,12 +114,8 @@ OpenVPN with latest OpenSSL on Ubuntu 12.04 LTS).
 
 ### It Doesn't Stomp All Over the Server's Filesystem
 
-Everything for the Docker container is contained in two images: the ephemeral
-run time image (kylemanna/openvpn) and the `$OVPN_DATA` data volume. To remove
-it, remove the corresponding containers, `$OVPN_DATA` data volume and Docker
-image and it's completely removed.  This also makes it easier to run multiple
-servers since each lives in the bubble of the container (of course multiple IPs
-or separate ports are needed to communicate with the world).
+Everything for the Docker container is contained in two folders:
+* `clients/` for all the created certificates
 
 ### Some (arguable) Security Benefits
 
@@ -124,6 +124,19 @@ compromise of the server.  There are many arguments surrounding this, but the
 take away is that it certainly makes it more difficult to break out of the
 container.  People are actively working on Linux containers to make this more
 of a guarantee in the future.
+
+
+## Differences from kylemanna/docker-openvpn
+
+* OTP/PAM NOT suported anymore (I dont know how it worked in the first place tbh)
+
+* custom `ovpn_genconfig_tap` and `ovp_run_tap` scripts which do some special setup on container start.
+
+* Container will automatically create the `openvpn.conf` on startup if the `ovpn_env.sh`
+  doesn't exist in `/etc/openvpn`. This will NOT automatically create the certificates.
+
+* No longer uses docker volume but local file dir & mount.
+  I prefer it this way, so if my server dies for some reason I can still recover the data without docker.
 
 ## Differences from jpetazzo/dockvpn
 

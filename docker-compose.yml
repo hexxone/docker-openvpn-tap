@@ -9,6 +9,8 @@ services:
             - NET_ADMIN
         volumes:
             - ./data:/etc/openvpn
+        environment:
+            - MYHOST=${HOSTNAME}
         ports:
             - "${PUBLIC_PORT}:1194/udp"
         network_mode: bridge
