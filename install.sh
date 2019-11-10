@@ -8,22 +8,19 @@ else
     exit 1
 fi
 
-mkdir -p data
-docker-compose stop
-docker container rm docker_openvpn_tap
+# shutdown & remove container
+docker-compose down
 
-# build, deploy and setup
-docker build .
-docker-compose up -d
-docker-compose run --rm docker_openvpn_tap ovpn_genconfig -u udp://$HOSTNAME
+# copy client config dir profiles
+mkdir -p data
+#cp -r ccd/ data/ccd/
+
+# build, deploy and setup keys
+docker-compose up -d --build --force-recreate
 docker-compose run --rm docker_openvpn_tap ovpn_initpki
 
-# stop and copy the real configuration
-docker-compose stop
-cp data/openvpn.conf data/openvpn.bak
-cp actual_openvpn.conf data/openvpn.conf
-
-# start once again
-docker-compose up -d
+# restart to avoid OpenVpn accidentally blocking the interface.
+# also required to load the freshly generated keys
+docker-compose restart
 
 echo "Done setting up."
