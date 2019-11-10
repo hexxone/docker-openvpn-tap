@@ -5,8 +5,6 @@ Modified Version of kylemanna/docker-openvpn to run in TAP Mode with compose.
 * Docker Registry @ [kylemanna/openvpn](https://hub.docker.com/r/kylemanna/openvpn/)
 * GitHub @ [kylemanna/docker-openvpn](https://github.com/kylemanna/docker-openvpn)
 
-The base image was changed from Alpine to ArchLinux for easy network interface configuration and sysctl access.
-
 At this point a Linux-Docker-Host is mandatory.
 
 ## TODO
