@@ -1,16 +1,37 @@
 # OpenVPN using TAP-MODE for Docker
 
-Modified Version of kylemanna/docker-openvpn to run in TAP Mode with compose.
+This is a modified Version of kylemanna/docker-openvpn to run in TAP Mode with compose.
 
 * Docker Registry @ [kylemanna/openvpn](https://hub.docker.com/r/kylemanna/openvpn/)
 * GitHub @ [kylemanna/docker-openvpn](https://github.com/kylemanna/docker-openvpn)
 
 At this point a Linux-Docker-Host is mandatory.
 
-## TODO
+## ⛔️ NOTICE ⛔️
 
-* if in-container bridge setup is not possible, maybe hand the /dev/docker0 bridge directly into the container?
+### THIS PROJECT IS CURRENTLY BROKEN
 
+* if you intend to pursue it, you should be prepared to invest a lot of time
+
+* you should already know how to manually set-up TUN and TAP OpenVPN, otherwise
+
+* read through this whole file before trying ANYTHING!
+
+* See "differences" for more details on changes to this container.
+
+* Feel free to open a PR if you get it up and running and please don't open unnecessary Issues.
+
+
+
+
+
+### Problems at hand
+
+* Setup seems to be inconsistent, perhaps something changed about OpenVPN install or Alpine image
+
+* At the moment the `br0` iface inside of the container is NOT receiving an IP address and NOT able to connect outside.
+
+* !!! This setup enables ARP poisoning of your network, so you should know what you are doing !!!
 
 
 ## Quick Start
@@ -31,12 +52,9 @@ At this point a Linux-Docker-Host is mandatory.
 
 * run `docker-compose run docker_openvpn_tap bash` to enter the container with interactive shell.
   From there use `ifconfig -a` and `cat /etc/network/interfaces` to compare the ip config.
-  At the moment the `br0` NOT receiving an IP address and NOT able to connect outside.
 
 
 ## How Does It Work?
-
-Scroll down to "differences" for more details on how this container is put together.
 
 Initialize the docker-compose stack using the `install.sh` script to automatically generate:
 
@@ -144,10 +162,4 @@ of a guarantee in the future.
   volume for re-use across containers
 * Addition of tls-auth for HMAC security
 
-## Tested On
-
-* Docker hosts:
-  * Ubuntu16 rootserver (32gb ram, 8core)
-* Clients
-  * Windows OpenVPN Connect V3 Beta
-
+## NOT TESTED, NOT WORKING - READ ABOVE
