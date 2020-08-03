@@ -13,15 +13,15 @@ At this point a Linux-Docker-Host is mandatory.
 
 * if you intend to pursue it, you should be prepared to invest a lot of time
 
-* you should already know how to manually set-up TUN and TAP OpenVPN, otherwise
+* you should already know how to manually set-up TUN and TAP OpenVPN, otherwise stop right there
 
 * read through this whole file before trying ANYTHING!
 
-* See "differences" for more details on changes to this container.
+* Especially see "differences" for more details on changes to this container.
 
-* Feel free to open a PR if you get it up and running and please don't open unnecessary Issues.
+* Feel free to open a PR if you get it up and running
 
-
+* Please don't open unnecessary Issues
 
 
 
